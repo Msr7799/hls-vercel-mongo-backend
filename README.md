@@ -40,6 +40,11 @@ Your endpoint will be:
 https://YOUR-PROJECT.vercel.app/api/state
 ```
 
+The repository includes a small `public` output directory so Vercel can finish
+the API-only deployment when the project Output Directory is set to `public`.
+The root page also provides a safe health and debug dashboard. It can test MongoDB,
+show request timing, and inspect API responses without exposing database credentials.
+
 Test MongoDB connectivity with:
 
 ```text

@@ -3,6 +3,7 @@ import { MongoClient } from 'mongodb';
 const DB_NAME = 'hls_collector';
 const COLLECTION = 'sticky_state';
 const DOC_ID = 'main';
+const SERVICE_STARTED_AT = new Date().toISOString();
 
 function buildMongoUri() {
   const raw = String(process.env.MONGODB_URI || '').trim();
@@ -71,6 +72,10 @@ function authorized(req) {
   return got === expected;
 }
 
+function tokenProtectionEnabled() {
+  return String(process.env.SYNC_TOKEN || '').length > 0;
+}
+
 function parseBody(req) {
   if (!req.body) return {};
   if (typeof req.body === 'object') return req.body;
@@ -92,8 +97,20 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       if (req.query?.health === '1') {
-        await getClientPromise();
-        return res.status(200).json({ ok: true, mongo: 'connected' });
+        const client = await getClientPromise();
+        await client.db(DB_NAME).command({ ping: 1 });
+        return res.status(200).json({
+          ok: true,
+          service: 'hls-sticky-collector',
+          mongo: 'connected',
+          authentication: tokenProtectionEnabled() ? 'token-required' : 'open',
+          database: DB_NAME,
+          collection: COLLECTION,
+          region: process.env.VERCEL_REGION || 'local',
+          runtime: process.version,
+          startedAt: SERVICE_STARTED_AT,
+          checkedAt: new Date().toISOString()
+        });
       }
 
       const col = await getCollection();

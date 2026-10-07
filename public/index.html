@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="theme-color" content="#07111f">
+    <title>HLS Collector — مراقبة الخادم</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+    <main class="shell">
+      <header class="topbar">
+        <div class="brand"><span class="brand-mark">H</span><div><p class="eyebrow">VERCEL · MONGODB · API</p><h1>مركز مراقبة HLS Collector</h1></div></div>
+        <div id="liveBadge" class="live-badge is-idle"><span></span><strong>بانتظار الفحص</strong></div>
+      </header>
+
+      <section class="hero panel">
+        <div><p class="eyebrow">SERVER OBSERVABILITY</p><h2>راقب صحة الخادم وشخّص الاتصال من مكان واحد.</h2><p class="muted">الفحوصات لا تعرض بيانات MongoDB السرية. ضع SYNC_TOKEN فقط إذا كانت الحماية مفعّلة في Vercel.</p></div>
+        <div class="actions"><button id="healthButton" class="button button-primary" type="button">فحص الصحة</button><button id="readButton" class="button" type="button">اختبار القراءة</button></div>
+      </section>
+
+      <section class="metrics" aria-label="حالة الخادم">
+        <article class="metric panel"><span class="metric-icon">API</span><p>الخدمة</p><strong id="apiStatus">غير مفحوصة</strong></article>
+        <article class="metric panel"><span class="metric-icon">DB</span><p>MongoDB</p><strong id="mongoStatus">غير مفحوصة</strong></article>
+        <article class="metric panel"><span class="metric-icon">MS</span><p>زمن الاستجابة</p><strong id="latencyStatus">—</strong></article>
+        <article class="metric panel"><span class="metric-icon">SEC</span><p>الحماية</p><strong id="authStatus">غير معروفة</strong></article>
+      </section>
+
+      <section class="workspace">
+        <div class="panel control-panel">
+          <div class="section-heading"><div><p class="eyebrow">REQUEST LAB</p><h2>أدوات الفحص</h2></div><button id="copyButton" class="icon-button" type="button">نسخ الرابط</button></div>
+          <label class="field"><span>عنوان API</span><input id="endpoint" dir="ltr" readonly></label>
+          <label class="field"><span>SYNC_TOKEN <small>اختياري ولا يتم حفظه</small></span><span class="secret-field"><input id="token" dir="ltr" type="password" autocomplete="off" placeholder="ألصق التوكن إذا كانت الحماية مفعّلة"><button id="toggleToken" type="button">إظهار</button></span></label>
+          <div class="quick-grid">
+            <button class="quick-action" data-action="health" type="button"><strong>Health Check</strong><span>Mongo ping + runtime</span></button>
+            <button class="quick-action" data-action="read" type="button"><strong>GET State</strong><span>اختبار قراءة المستند</span></button>
+            <button class="quick-action danger" data-action="clear" type="button"><strong>Clear Debug</strong><span>مسح السجل المحلي</span></button>
+          </div>
+          <div class="endpoint-guide"><h3>المسارات المتاحة</h3><div><code>GET /api/state?health=1</code><span>صحة الخدمة وقاعدة البيانات</span></div><div><code>GET /api/state</code><span>قراءة الحالة المحفوظة</span></div><div><code>PUT /api/state</code><span>حفظ الحالة</span></div><div><code>DELETE /api/state</code><span>حذف الحالة</span></div></div>
+        </div>
+
+        <div class="panel debug-panel">
+          <div class="section-heading"><div><p class="eyebrow">LIVE DEBUG</p><h2>سجل التشخيص</h2></div><span id="requestCount" class="counter">0 طلب</span></div>
+          <div id="emptyState" class="empty-state"><span>&lt;/&gt;</span><strong>لا توجد طلبات بعد</strong><p>ابدأ بفحص الصحة وستظهر هنا تفاصيل الطلب والاستجابة.</p></div>
+          <div id="debugLog" class="debug-log" aria-live="polite"></div>
+        </div>
+      </section>
+      <footer><span>HLS Sticky Collector API</span><span id="clock">—</span></footer>
+    </main>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
