@@ -5,5 +5,9 @@
   "type": "module",
   "dependencies": {
     "mongodb": "^6.20.0"
+  },
+  "packageManager": "pnpm@10.28.0",
+  "scripts": {
+    "build": "node -e \"console.log('API-only Vercel project: no frontend build required')\""
   }
 }
